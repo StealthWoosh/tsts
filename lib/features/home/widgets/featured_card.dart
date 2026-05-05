@@ -3,6 +3,8 @@ import 'package:ruang_sehat/theme/app_colors.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:ruang_sehat/features/articles/providers/articles_provider.dart';
+import 'package:ruang_sehat/features/articles/presentation/screens/detail_screen.dart';
+
 
 class FeaturedCard extends StatelessWidget {
   const FeaturedCard({super.key});
@@ -20,13 +22,20 @@ class FeaturedCard extends StatelessWidget {
             return const Center(child: Text("Tidak ada Artikel"));
           }
         return ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+          scrollDirection: Axis.horizontal,
           itemCount: provider.articles.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 7),
+          separatorBuilder: (_, __) => const SizedBox(width: 8),
           itemBuilder: (context, index) {
             final article = provider.articles[index];
-            return SizedBox(
+            return GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  DetailScreen.routeName,
+                  arguments: {'id': article.id},
+                  );
+              },
+              child: SizedBox(  
               width: 260,
               child: Card(
                 color: AppColors.secondary,
@@ -126,6 +135,7 @@ class FeaturedCard extends StatelessWidget {
                   ),
                   ),
               ),
+            ),
             );
           },
         );

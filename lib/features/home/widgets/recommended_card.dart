@@ -2,22 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:ruang_sehat/theme/app_colors.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:ruang_sehat/features/articles/presentation/screens/detail_screen.dart';
 import 'package:ruang_sehat/features/articles/providers/articles_provider.dart';
+
 
 class RecommendedCard extends StatelessWidget {
   const RecommendedCard({super.key});
   static final String baseUrl = dotenv.env['BASE_URL']!;
 
+  
   @override
   Widget build(BuildContext context) {
+    return Consumer<ArticleProvider>(
+        builder: (context, provider, _) {
+          if (provider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (provider.articles.isEmpty) {
+            return const Center(child: Text("Tidak ada Artikel"));
+          }
+          
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: 10,
       separatorBuilder: (_, __) => const SizedBox(height: 7),
       itemBuilder: (context, index) {
-        return Card( 
-          color: AppColors.secondary,
+        final article = provider.articles[index];
+            return GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, 
+                DetailScreen.routeName,
+                arguments: {'id': article.id},
+                );
+              },
+              child: Card(
+                color: AppColors.secondary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -94,8 +115,11 @@ class RecommendedCard extends StatelessWidget {
               ),
               ],
             )),
+        ),
         );
       },
+    );
+        },
     );
   }
 }

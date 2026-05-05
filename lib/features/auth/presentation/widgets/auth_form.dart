@@ -37,7 +37,6 @@ class _AuthFormState extends State<AuthForm> {
 
     if (widget.isLogin) {
       success = await auth.login(
-        nameController.text.trim(),
         usernameController.text.trim(),
         passwordController.text.trim(),
       );
@@ -179,7 +178,9 @@ class _AuthFormState extends State<AuthForm> {
       // Button Login/Register
       SizedBox(height: 18),
       ElevatedButton(
-        onPressed: () {},
+        onPressed: () async {
+          handleSubmit(context);
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           minimumSize: Size(double.infinity, 53),

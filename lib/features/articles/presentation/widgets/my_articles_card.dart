@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:ruang_sehat/theme/app_colors.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'package:ruang_sehat/features/articles/providers/articles_provider.dart';
+
 class MyArticlesCard extends StatelessWidget {
   const MyArticlesCard({super.key});
+  static final String baseUrl = dotenv.env['BASE_URL']!;
 
   @override  
   Widget build(BuildContext context) {
-    return ListView.separated(  
+    return Consumer<ArticleProvider>(
+      builder: (context, provider, _) {
+        if (provider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (provider.myArticles.isEmpty) {
+          return const Center(child: Text("Tidak ada Artikel"));
+        }
+      return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: 10,
-      separatorBuilder: (_, __) => const SizedBox(height: 7),
+      itemCount: provider.myArticles.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
+        final myArticle = provider.myArticles[index];
         return Card(  
           color: AppColors.secondary,
           clipBehavior: Clip.antiAlias,
@@ -30,7 +45,9 @@ class MyArticlesCard extends StatelessWidget {
                       decoration: BoxDecoration(  
                         borderRadius: BorderRadius.circular(20),
                         image: DecorationImage(  
-                          image: NetworkImage("assets/images/artikel.jpg"),
+                          image: NetworkImage(
+                            "$baseUrl/${myArticle.image}"
+                            ),
                           fit: BoxFit.cover,
                           alignment: Alignment.center,
                         ),
@@ -50,7 +67,7 @@ class MyArticlesCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(99),
                         ),
                         child: Text(
-                          'Healthy Tips',
+                          myArticle.category,
                           style: TextStyle(  
                             color: AppColors.secondary,
                             fontSize: 14,
@@ -70,7 +87,7 @@ class MyArticlesCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(  
-                      'Artikel ke $index',
+                      'Artikel ke ${index + 1}',
                       style: TextStyle(  
                         fontSize: 12,
                         color: AppColors.hintText,
@@ -78,7 +95,7 @@ class MyArticlesCard extends StatelessWidget {
                       ),
                     ),
                     Text(  
-                      '2022-10-01',
+                      myArticle.date,
                       style: TextStyle(  
                         fontSize: 12,
                         color: AppColors.hintText,
@@ -89,7 +106,7 @@ class MyArticlesCard extends StatelessWidget {
                 ),
               ),
               Text(  
-                  "The Benefits of Running and Tips to get Started",
+                  myArticle.title,
                   style: TextStyle(  
                     color: Colors.black,
                     fontSize: 16,
@@ -103,6 +120,8 @@ class MyArticlesCard extends StatelessWidget {
           )
         );
       },
+    );
+      }
     );
   }
 }

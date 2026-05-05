@@ -26,6 +26,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
     Future.microtask((){
       final articleProvider = context.read<ArticleProvider>();
       articleProvider.getArticles();
+      articleProvider.getMyArticles();
     });
   }
   

@@ -45,7 +45,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Provider Login
-  Future<bool> login(String name, String username, String password) async {
+  Future<bool> login(String username, String password) async {
     _isLoading = true;
     _errorMessage = null;
     _successMessage = null;
@@ -55,7 +55,7 @@ class AuthProvider with ChangeNotifier {
       final response = await AuthServices.login(username, password);
       final data = jsonDecode(response.body);
 
-      if (data['sucess'] == true) {
+      if (data['success'] == true) {
         final token = data['data']['token'];
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token);

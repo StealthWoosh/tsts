@@ -61,4 +61,9 @@ class ArticlesServices {
     final List articles = data['articles'] ?? [];
     return articles.map((e) => ArticlesModel.fromJson(e)).toList();
   }
+
+  static Future<ArticlesModel> getDetailArticle(String id) async {
+    final data = await _getRequest('/$id');
+    return ArticlesModel.fromJson(data);
+  }
 }

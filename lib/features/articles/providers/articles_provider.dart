@@ -4,6 +4,8 @@ import 'package:ruang_sehat/features/articles/data/articles_services.dart';
 
 class ArticleProvider with ChangeNotifier {
   List<ArticlesModel> _articles = [];
+  List<ArticlesModel> _myArticles = [];
+  ArticlesModel? _detailArticle;
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -11,7 +13,8 @@ class ArticleProvider with ChangeNotifier {
 
   // Getter
   List<ArticlesModel> get articles => _articles;
-  
+  List<ArticlesModel> get myArticles => _myArticles;
+  ArticlesModel? get detailArticle => _detailArticle;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   String? get successMessage => _successMessage;
@@ -36,6 +39,44 @@ class ArticleProvider with ChangeNotifier {
     }
   }
 
+  // get my article
+  Future<void> getMyArticles() async {
+    _setLoading(true);
+    _resetMessage();
+
+    try {
+      final result = await ArticlesServices.getMyArticles();
+
+      _myArticles = result;
+
+      if(result.isEmpty) {
+        _errorMessage = "Data artikel kosong";
+      
+      }
+    } catch (err) {
+      _errorMessage = _parseError(err);
+      _myArticles = [];
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // get detail artcle
+  Future<void> getDetailArticle(String id) async {
+    _setLoading(true);
+    _resetMessage();
+
+    try {
+      final result = await ArticlesServices.getDetailArticle(id);
+      _detailArticle = result;
+    } catch (e) {
+      _errorMessage = _parseError(e);
+      _detailArticle = null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+  
   // Helper
   void _setLoading(bool value) {
     _isLoading = value;

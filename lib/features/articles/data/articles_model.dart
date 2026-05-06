@@ -13,7 +13,7 @@ class ArticlesModel {
 
   factory ArticlesModel.fromJson(Map<String, dynamic> json) {
     return ArticlesModel(
-      id: json['id'] ?? '',
+      id: json['id'] ?? json['_id'] ?? '',
       title: json['title'] ?? '',
       date: json['date'] ?? '',
       image: json['image'] ?? '',

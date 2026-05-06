@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:ruang_sehat/features/auth/providers/auth_provider.dart';
 import 'package:ruang_sehat/utils/snackbar_helper.dart';
 import 'package:ruang_sehat/features/auth/presentation/screens/auth_screen.dart';
+import 'package:ruang_sehat/features/articles/providers/articles_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -115,56 +116,70 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Featured',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  ),
-                  const Text(
-                    'See More >',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: AppColors.hintText,
-                      fontWeight: FontWeight.w500,
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrolInfo) {
+          // Cek jika sisa scroll kurang dari 200 pixel dari bawah
+          if (scrolInfo.metrics.pixels >= scrolInfo.metrics.maxScrollExtent - 200) {
+            final provider = context.read<ArticleProvider>();
+
+            // Panggil fungsi getArticles dengan isRefresh = false (Load More)
+            if (!provider.isFetchingMore && provider.hasNextPage) {
+              provider.getArticles(isRefresh: false);
+            }
+          }
+          return true;
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Featured',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            //Featured Card
-            Padding(
-              padding: const EdgeInsets.only(left: 24, bottom: 16),
-            ),
-            // Recommend Card
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Recommended for you',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    const Text(
+                      'See More >',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColors.hintText,
+                        fontWeight: FontWeight.w500,
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  RecommendedCard(),
-                ],
-              )
-            ),
-          ],
+                    ),
+                  ],
+                ),
+              ),
+              //Featured Card
+              Padding(
+                padding: const EdgeInsets.only(left: 24, bottom: 16),
+              ),
+              // Recommend Card
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Recommended for you',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    RecommendedCard(),
+                  ],
+                )
+              ),
+            ],
+          ),
         ),
       ),
     );

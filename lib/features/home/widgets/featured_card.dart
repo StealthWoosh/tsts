@@ -18,7 +18,7 @@ class FeaturedCard extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (provider.articles.isEmpty) {
+          if (provider.featuredArticles.isEmpty) {
             return const Center(child: Text("Tidak ada Artikel"));
           }
         return ListView.separated(

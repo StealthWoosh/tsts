@@ -51,16 +51,50 @@ class ArticleProvider with ChangeNotifier {
         limit: 5,
       );
 
-      _articles = result; 
+      final List<ArticlesModel> data = result['articles'];
+      final int totalPages = result['totalPages'];
 
-      if (result.isEmpty) {
+      if (isRefresh) {
+        _articles = data;
+
+        // Ambil data dari halaman terakhir untuk Featured
+        if (totalPages > 1) {
+          final lastPageData = await ArticlesServices.getArticles(
+            page: totalPages,
+            limit: 5,
+          );
+          final List<ArticlesModel> lastPageArticles = lastPageData['articles'];
+          _featuredArticles = lastPageArticles;
+        } else {
+          // Jika hanya ada 1 halaman, ambil data terbawah dari halamn tersebut
+          _featuredArticles = data.length > 5
+            ? data.sublist(data.length - 5)
+            : List.from(data);
+        }
+      } else {
+        // Tambahkan data baru ke list Recommended
+        _articles.addAll(data);
+      }
+
+      // Atur status halaman berikutnya
+      if (data.isEmpty || data.length < 5) {
+        _hasNextPage = false;
+      } else {
+        _currentPage++;
+      }
+
+      if (data.isEmpty && isRefresh) {
         _errorMessage = "Data artikel kosong";
       }
     } catch (err) {
       _errorMessage = _parseError(err);
-      _articles = [];
+      if (isRefresh) _articles = [];
     } finally {
-      _setLoading(false);
+      if (isRefresh) {
+        _setLoading(false);
+      } else {
+        _setFetchingMore(false);
+      }
     }
   }
 

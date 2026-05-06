@@ -3,7 +3,7 @@ import 'package:ruang_sehat/theme/app_colors.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:ruang_sehat/features/articles/providers/articles_provider.dart';
-
+import 'package:ruang_sehat/features/articles/presentation/screens/detail_screen.dart';
 class MyArticlesCard extends StatelessWidget {
   const MyArticlesCard({super.key});
   static final String baseUrl = dotenv.env['BASE_URL']!;
@@ -26,7 +26,15 @@ class MyArticlesCard extends StatelessWidget {
       separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
         final myArticle = provider.myArticles[index];
-        return Card(  
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              DetailScreen.routeName,
+              arguments: {'id': myArticle.id, 'isMe': true},
+            );
+          },
+          child: Card(  
           color: AppColors.secondary,
           clipBehavior: Clip.antiAlias,
           shape: RoundedRectangleBorder(  
@@ -118,6 +126,7 @@ class MyArticlesCard extends StatelessWidget {
               ],
             ),
           )
+        ),
         );
       },
     );

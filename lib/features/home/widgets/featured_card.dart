@@ -117,7 +117,9 @@ class FeaturedCard extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            Text(
+                            Align(
+                              alignment: AlignmentGeometry.centerLeft,
+                            child: Text(
                               article.title,
                               style: TextStyle(
                                 color: Colors.black,
@@ -126,6 +128,7 @@ class FeaturedCard extends StatelessWidget {
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
+                            ),
                             ),
                           ],
                         ),

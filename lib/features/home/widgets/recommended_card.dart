@@ -99,8 +99,10 @@ class RecommendedCard extends StatelessWidget {
                        ),
                       ],
                       ),
-                      Text(
-                        "The Benefits of Running and Tips to Get Started",
+                      Align( 
+                        alignment: AlignmentGeometry.centerLeft,
+                      child: Text(
+                        article.title,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16,
@@ -108,6 +110,7 @@ class RecommendedCard extends StatelessWidget {
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
+                      ),
                       ),
                     ],
                   ),

@@ -4,6 +4,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:ruang_sehat/features/articles/presentation/widgets/my_articles_card.dart';
 import 'package:provider/provider.dart';
 import 'package:ruang_sehat/features/articles/providers/articles_provider.dart';
+import 'package:ruang_sehat/features/articles/presentation/screens/form_article_screen.dart';
+
 class MyArticlesScreen extends StatelessWidget {
   const MyArticlesScreen({super.key});
 
@@ -50,7 +52,13 @@ class MyArticlesScreen extends StatelessWidget {
       ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(  
+            context,
+            FormArticleScreen.routeName,
+            arguments: {'isEdit': false},
+          );
+        },
         backgroundColor: AppColors.primary,
         shape: CircleBorder(),
         child: Icon(LucideIcons.plus, color: Colors.white, size: 30),

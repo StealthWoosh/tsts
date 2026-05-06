@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:ruang_sehat/theme/app_colors.dart';
 import 'package:ruang_sehat/features/home/widgets/featured_card.dart';
 import 'package:ruang_sehat/features/home/widgets/recommended_card.dart';
+import 'package:ruang_sehat/widgets/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
+import 'package:ruang_sehat/features/auth/providers/auth_provider.dart';
+import 'package:ruang_sehat/utils/snackbar_helper.dart';
+import 'package:ruang_sehat/features/auth/presentation/screens/auth_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -33,9 +38,16 @@ class HomeScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Hi, Alex',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  Consumer<AuthProvider>(  
+                    builder: (context, provider, _) {
+                    return Text(
+                      'Hi, ${provider.profile?.name ?? 'user'}',
+                    style: TextStyle(
+                      fontSize: 20, 
+                      fontWeight: FontWeight.w600
+                      ),
+                  );
+                    },
                   ),
                   Text(
                     'How are you feeling today?',
@@ -54,9 +66,34 @@ class HomeScreen extends StatelessWidget {
                 ),
                 color: AppColors.secondary,
                 onSelected: (value) {
-                  if (value == 'logout') {
-                    print("Logout clicked");
-                  }
+                  ModalBottomSheet.show(  
+                    context: context,
+                    label: 'Are you sure you want to log out?',
+                    isLogout: true,
+                    onConfirm: () async {
+                      final authProvider = context.read<AuthProvider>();
+                      await authProvider.logout();
+
+                      if (authProvider.errorMessage == null) {
+                        SnackbarHelper.show(  
+                          context,
+                          message: authProvider.successMessage ?? 'success',
+                          isError: false,
+                        );
+                        Navigator.pushNamedAndRemoveUntil(  
+                          context,
+                          AuthScreen.routeName,
+                          (route) => false,
+                        );
+                      } else {
+                        SnackbarHelper.show(  
+                          context,
+                          message: authProvider.errorMessage ?? 'error',
+                          isError: true,
+                        );
+                      }
+                    },
+                  );
                 },
                 itemBuilder: (context) => [
                   const PopupMenuItem(
